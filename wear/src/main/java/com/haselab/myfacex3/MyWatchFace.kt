@@ -5,10 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.*
-import android.os.BatteryManager
-import android.os.Bundle
-import android.os.Handler
-import android.os.Message
+import android.os.*
 import android.support.wearable.watchface.CanvasWatchFaceService
 import android.support.wearable.watchface.WatchFaceService
 import android.support.wearable.watchface.WatchFaceStyle
@@ -64,7 +61,7 @@ class MyWatchFace : CanvasWatchFaceService() {
         return Engine()
     }
 
-    private class EngineHandler(reference: MyWatchFace.Engine) : Handler() {
+    private class EngineHandler(reference: MyWatchFace.Engine) : Handler(Looper.getMainLooper()) {
         private val mWeakReference: WeakReference<MyWatchFace.Engine> = WeakReference(reference)
 
         override fun handleMessage(msg: Message) {
@@ -602,7 +599,7 @@ class MyWatchFace : CanvasWatchFaceService() {
 
             // write date
             mClockFontPaint.textAlign = Paint.Align.CENTER
-            mClockFontPaint.textSize = (FONT_SIZE * 1 / 2f * 1.1f)
+            mClockFontPaint.textSize = (FONT_SIZE * 1 / 2f * 1.3f)
             mClockFontPaint.setShadowLayer(
                 SHADOW_RADIUS, 0f, 0f, Color.BLACK
             )
@@ -624,12 +621,13 @@ class MyWatchFace : CanvasWatchFaceService() {
             )
 
             // draw now time
-            mClockFontPaint.textSize = FONT_SIZE * 1.3f
-            mClockFontPaint.setShadowLayer(FONT_SIZE, 5f, 5f, Color.BLACK)
+            mClockFontPaint.textSize = FONT_SIZE * 1.5f
+            mClockFontPaint.setShadowLayer(FONT_SIZE * 1.5f,
+                5f, 5f, Color.BLACK)
 
             // 24hour 表示にする
-            val ampm = mCalendar.get(Calendar.AM_PM)
-            val hour = mCalendar.get(Calendar.HOUR) + ampm * 12
+            val amPm = mCalendar.get(Calendar.AM_PM)
+            val hour = mCalendar.get(Calendar.HOUR) + amPm * 12
 
             val clockStr = if (!mAmbient) {
                 zeroPad(hour.toString()) +
@@ -681,7 +679,7 @@ class MyWatchFace : CanvasWatchFaceService() {
                 mCalendar.timeZone = TimeZone.getDefault()
                 invalidate()
             } else {
-                untzRegisterReceiver()
+                unRegisterReceiver()
             }
 
             /* Check and trigger whether or not timer should be running (only in active mode). */
@@ -707,21 +705,12 @@ class MyWatchFace : CanvasWatchFaceService() {
             this@MyWatchFace.registerReceiver(mBatteryReceiver, intentFilter)
         }
 
-        private fun untzRegisterReceiver() {
+        private fun unRegisterReceiver() {
             if (!mRegisteredTimeZoneReceiver) {
                 return
             }
             mRegisteredTimeZoneReceiver = false
             this@MyWatchFace.unregisterReceiver(mTimeZoneReceiver)
-        }
-
-        private fun unBatteryRegisterReceiver() {
-            Log.v(TAG, "start unBatteryRegisterReceiver")
-            if (!mRegisteredBatteryReceiver) {
-                return
-            }
-            mRegisteredBatteryReceiver = false
-            this@MyWatchFace.unregisterReceiver(mBatteryReceiver)
         }
 
         /**
