@@ -6,6 +6,7 @@ import android.os.VibratorManager
 import android.support.wearable.watchface.WatchFaceService
 import android.util.Log
 import android.widget.Toast
+import com.haselab.myfacex3.vibration.VibrationMgr
 
 private const val TAG = "MyFaceX3_TAP"
 
@@ -13,10 +14,6 @@ class Tap {
 
       fun onTapCommand(tapType: Int, x: Int, y: Int, eventTime: Long,applicationContext: Context ,bat: Int) {
           Log.v(TAG, "on tap $tapType ")
-          val vib = applicationContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-          val a = VibrationMgr(vib)
-          a.single()
-
 
           when (tapType) {
               WatchFaceService.TAP_TYPE_TOUCH -> {
@@ -33,6 +30,7 @@ class Tap {
                       Toast.LENGTH_SHORT
                   )
                       .show()
+                  VibrationMgr.single()
               }
           }
     }

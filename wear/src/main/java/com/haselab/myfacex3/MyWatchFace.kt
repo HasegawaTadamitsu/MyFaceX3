@@ -11,8 +11,8 @@ import android.support.wearable.watchface.WatchFaceService
 import android.support.wearable.watchface.WatchFaceStyle
 import android.util.Log
 import android.view.SurfaceHolder
-import android.widget.Toast
 import androidx.palette.graphics.Palette
+import com.haselab.myfacex3.vibration.VibrationMgr
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.cos
@@ -58,6 +58,8 @@ private const val FONT_SIZE = 60f
 class MyWatchFace : CanvasWatchFaceService() {
 
     override fun onCreateEngine(): Engine {
+        val vib = applicationContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        VibrationMgr.setVibrator(vib)
         return Engine()
     }
 
@@ -414,11 +416,7 @@ class MyWatchFace : CanvasWatchFaceService() {
                 mLastVibrateLong + 4 * 60 * 1000 < now_long // 4 min interval
             ) {
                 mLastVibrateLong = now_long
-                val vibrator = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as Vibrator
-                val effect = VibrationEffect.createOneShot(
-                    200, VibrationEffect.DEFAULT_AMPLITUDE
-                )
-                vibrator.vibrate(effect)
+                VibrationMgr.single()
             }
         }
 
