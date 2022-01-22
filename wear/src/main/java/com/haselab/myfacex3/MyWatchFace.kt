@@ -1,6 +1,5 @@
 package com.haselab.myfacex3
 
-import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -386,24 +385,7 @@ class MyWatchFace : CanvasWatchFaceService() {
          * used for implementing specific logic to handle the gesture.
          */
         override fun onTapCommand(tapType: Int, x: Int, y: Int, eventTime: Long) {
-            when (tapType) {
-                WatchFaceService.TAP_TYPE_TOUCH -> {
-                    // The user has started touching the screen.
-                }
-                WatchFaceService.TAP_TYPE_TOUCH_CANCEL -> {
-                    // The user has started a different gesture or otherwise cancelled the tap.
-                }
-                WatchFaceService.TAP_TYPE_TAP -> {
-                    // The user has completed the tap gesture.
-                    Toast.makeText(
-                        applicationContext,
-                        "$mBatteryLevel%",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                }
-            }
-            invalidate()
+            Tap(tapType,x,y,eventTime,applicationContext,mBatteryLevel)
         }
 
         private fun zeroPad(inp: String): String {
@@ -420,16 +402,16 @@ class MyWatchFace : CanvasWatchFaceService() {
             drawWatchFace(canvas)
         }
 
-        @SuppressLint("ServiceCast")
+        @Suppress("LocalVariableName")
         private fun vibrate(now: Calendar) {
-            val nowLong = now.timeInMillis
+            val now_long = now.timeInMillis
             val min = now.get(Calendar.MINUTE)
             val hour24 = now.get(Calendar.HOUR_OF_DAY)
-            if (hour24 in 7..19 &&      // 6〜20時
-                min in 55..59 &&      // 55〜59
-                mLastVibrateLong + 4 * 60 * 1000 < nowLong // 4 min interval
+            if (hour24 in  6..19 &&      // 6〜20時
+                min    in 55..59 &&      // 55〜59
+                mLastVibrateLong + 4 * 60 * 1000 < now_long // 4 min interval
             ) {
-                mLastVibrateLong = nowLong
+                mLastVibrateLong = now_long
                 val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                 val effect = VibrationEffect.createOneShot(
                     200, VibrationEffect.DEFAULT_AMPLITUDE
