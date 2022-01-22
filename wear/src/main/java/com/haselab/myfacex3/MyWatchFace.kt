@@ -110,6 +110,9 @@ class MyWatchFace : CanvasWatchFaceService() {
         private var mBurnInProtection: Boolean = false
         private var mBatteryLevel: Int = 0
 
+
+        private var mLastVibrateLong: Long = 0 // last vibrate milli sec
+
         /* Handler to update the time once a second in interactive mode. */
         private val mUpdateTimeHandler = EngineHandler(this)
 
@@ -411,8 +414,27 @@ class MyWatchFace : CanvasWatchFaceService() {
         override fun onDraw(canvas: Canvas, bounds: Rect) {
             val now = System.currentTimeMillis()
             mCalendar.timeInMillis = now
+            vibrate(mCalendar)
             drawBackground(canvas)
             drawWatchFace(canvas)
+        }
+
+        @Suppress("LocalVariableName")
+        private fun vibrate(now: Calendar) {
+            val now_long = now.timeInMillis
+            val min = now.get(Calendar.MINUTE)
+            val hour24 = now.get(Calendar.HOUR_OF_DAY)
+            if (hour24 in  6..19 &&      // 6〜20時
+                min    in 55..59 &&      // 55〜59
+                mLastVibrateLong + 4 * 60 * 1000 < now_long // 4 min interval
+            ) {
+                mLastVibrateLong = now_long
+                val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                val effect = VibrationEffect.createOneShot(
+                    200, VibrationEffect.DEFAULT_AMPLITUDE
+                )
+                vibrator.vibrate(effect)
+            }
         }
 
         private fun drawBackground(canvas: Canvas) {
@@ -622,8 +644,10 @@ class MyWatchFace : CanvasWatchFaceService() {
 
             // draw now time
             mClockFontPaint.textSize = FONT_SIZE * 1.5f
-            mClockFontPaint.setShadowLayer(FONT_SIZE * 1.5f,
-                5f, 5f, Color.BLACK)
+            mClockFontPaint.setShadowLayer(
+                FONT_SIZE * 1.5f,
+                5f, 5f, Color.BLACK
+            )
 
             // 24hour 表示にする
             val amPm = mCalendar.get(Calendar.AM_PM)
