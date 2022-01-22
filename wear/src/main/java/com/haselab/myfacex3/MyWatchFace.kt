@@ -425,7 +425,7 @@ class MyWatchFace : CanvasWatchFaceService() {
             val nowLong = now.timeInMillis
             val min = now.get(Calendar.MINUTE)
             val hour24 = now.get(Calendar.HOUR_OF_DAY)
-            if (hour24 in 6..19 &&      // 6〜20時
+            if (hour24 in 7..19 &&      // 6〜20時
                 min in 55..59 &&      // 55〜59
                 mLastVibrateLong + 4 * 60 * 1000 < nowLong // 4 min interval
             ) {
