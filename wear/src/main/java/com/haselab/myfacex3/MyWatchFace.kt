@@ -414,7 +414,7 @@ class MyWatchFace : CanvasWatchFaceService() {
                 mLastVibrateLong + 4 * 60 * 1000 < now_long // 4 min interval
             ) {
                 mLastVibrateLong = now_long
-                val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                val vibrator = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as Vibrator
                 val effect = VibrationEffect.createOneShot(
                     200, VibrationEffect.DEFAULT_AMPLITUDE
                 )
