@@ -1,5 +1,6 @@
 package com.haselab.myfacex3
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -419,16 +420,16 @@ class MyWatchFace : CanvasWatchFaceService() {
             drawWatchFace(canvas)
         }
 
-        @Suppress("LocalVariableName")
+        @SuppressLint("ServiceCast")
         private fun vibrate(now: Calendar) {
-            val now_long = now.timeInMillis
+            val nowLong = now.timeInMillis
             val min = now.get(Calendar.MINUTE)
             val hour24 = now.get(Calendar.HOUR_OF_DAY)
-            if (hour24 in  6..19 &&      // 6〜20時
-                min    in 55..59 &&      // 55〜59
-                mLastVibrateLong + 4 * 60 * 1000 < now_long // 4 min interval
+            if (hour24 in 6..19 &&      // 6〜20時
+                min in 55..59 &&      // 55〜59
+                mLastVibrateLong + 4 * 60 * 1000 < nowLong // 4 min interval
             ) {
-                mLastVibrateLong = now_long
+                mLastVibrateLong = nowLong
                 val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                 val effect = VibrationEffect.createOneShot(
                     200, VibrationEffect.DEFAULT_AMPLITUDE
