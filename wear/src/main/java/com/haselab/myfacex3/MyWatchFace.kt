@@ -385,7 +385,9 @@ class MyWatchFace : CanvasWatchFaceService() {
          * used for implementing specific logic to handle the gesture.
          */
         override fun onTapCommand(tapType: Int, x: Int, y: Int, eventTime: Long) {
-            Tap(tapType,x,y,eventTime,applicationContext,mBatteryLevel)
+            Tap().onTapCommand(tapType, x, y, eventTime, applicationContext, mBatteryLevel)
+            invalidate()
+
         }
 
         private fun zeroPad(inp: String): String {
@@ -407,8 +409,8 @@ class MyWatchFace : CanvasWatchFaceService() {
             val now_long = now.timeInMillis
             val min = now.get(Calendar.MINUTE)
             val hour24 = now.get(Calendar.HOUR_OF_DAY)
-            if (hour24 in  6..19 &&      // 6〜20時
-                min    in 55..59 &&      // 55〜59
+            if (hour24 in 6..19 &&      // 6〜20時
+                min in 55..59 &&      // 55〜59
                 mLastVibrateLong + 4 * 60 * 1000 < now_long // 4 min interval
             ) {
                 mLastVibrateLong = now_long
@@ -568,7 +570,7 @@ class MyWatchFace : CanvasWatchFaceService() {
             canvas.drawLines(ptsMinute, mMinutePaint)
             canvas.rotate(-(minutesRotation), mCenterX, mCenterY)
 
-            // seconds line 
+            // seconds line
             if (!mAmbient) {
                 canvas.rotate(secondsRotation, mCenterX, mCenterY)
                 val ptsSecond = floatArrayOf(

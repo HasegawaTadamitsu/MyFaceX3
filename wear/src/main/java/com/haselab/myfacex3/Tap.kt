@@ -18,16 +18,14 @@ import java.util.*
 import kotlin.math.cos
 import kotlin.math.sin
 
+private const val TAG = "MyFaceX3"
 
 class Tap {
-    /**
-     * Captures tap event (and tap type). The [WatchFaceService.TAP_TYPE_TAP] case can be
-     * used for implementing specific logic to handle the gesture.
-     */
-    Tap(tapType,x,y,eventTime,mBatteryLevel)
 
-    fun onTapCommand(tapType: Int, x: Int, y: Int, eventTime: Long,bat: batteryl) {
-        when (tapType) {
+      fun onTapCommand(tapType: Int, x: Int, y: Int, eventTime: Long,applicationContext: Context ,bat: Int) {
+          Log.v(TAG, "tap ")
+
+          when (tapType) {
             WatchFaceService.TAP_TYPE_TOUCH -> {
                 // The user has started touching the screen.
             }
@@ -38,7 +36,7 @@ class Tap {
                 // The user has completed the tap gesture.
                 Toast.makeText(
                     applicationContext,
-                    "$mBatteryLevel%",
+                    "$bat%",
                     Toast.LENGTH_SHORT
                 )
                     .show()
