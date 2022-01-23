@@ -34,9 +34,9 @@ object VibrationMgr {
     private fun checkInterval(): Boolean {
         val now = System.currentTimeMillis()
         if (mLastVibrateLong + INTERVAL_VIBRATE_MILLI_SEC < now) {
-            return false
+            return true
         }
         mLastVibrateLong = now
-    return true
+        return false
     }
 }

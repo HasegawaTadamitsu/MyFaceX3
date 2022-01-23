@@ -45,6 +45,7 @@ private const val MSG_UPDATE_TIME = 0
 class MyWatchFace : CanvasWatchFaceService() {
 
     override fun onCreateEngine(): Engine {
+        Log.v(TAG, "start onCreateEngine")
         val vib = applicationContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         VibrationMgr.setVibrator(vib)
         return Engine()
@@ -54,6 +55,8 @@ class MyWatchFace : CanvasWatchFaceService() {
         private val mWeakReference: WeakReference<MyWatchFace.Engine> = WeakReference(reference)
 
         override fun handleMessage(msg: Message) {
+            Log.v(TAG, "start handleMessage")
+
             val engine = mWeakReference.get()
             if (engine != null) {
                 when (msg.what) {
@@ -73,12 +76,14 @@ class MyWatchFace : CanvasWatchFaceService() {
 
         private val mTimeZoneReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
+                Log.v(TAG, "start ZoneReceiveOnReceive")
                 mWatchFace.setTimeZone(TimeZone.getDefault())
                 invalidate()
             }
         }
         private val mBatteryReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
+                Log.v(TAG, "start BatteryOnReceiver")
                 if (intent.action == Intent.ACTION_BATTERY_CHANGED) {
                     mWatchFace.setBatteryLevel(intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1))
                 }
@@ -87,10 +92,9 @@ class MyWatchFace : CanvasWatchFaceService() {
         }
         private lateinit var mWatchFace: WatchFace
         override fun onCreate(holder: SurfaceHolder) {
+            Log.v(TAG, "start onCreate")
             mWatchFace = WatchFace(resources)
-
             super.onCreate(holder)
-
             setWatchFaceStyle(
                 WatchFaceStyle.Builder(this@MyWatchFace)
                     .setAcceptsTapEvents(true)
@@ -102,11 +106,13 @@ class MyWatchFace : CanvasWatchFaceService() {
         }
 
         override fun onDestroy() {
+            Log.v(TAG, "start onDestroy")
             mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME)
             super.onDestroy()
         }
 
         override fun onPropertiesChanged(properties: Bundle) {
+            Log.v(TAG, "start onPropertiesChanged")
             super.onPropertiesChanged(properties)
             val lowBit = properties.getBoolean(
                 WatchFaceService.PROPERTY_LOW_BIT_AMBIENT, false
@@ -114,7 +120,7 @@ class MyWatchFace : CanvasWatchFaceService() {
             val burnProtect = properties.getBoolean(
                 WatchFaceService.PROPERTY_BURN_IN_PROTECTION, false
             )
-            if (lowBit  || burnProtect ) {
+            if (lowBit || burnProtect) {
                 mWatchFace.setPowerSaveMode()
             } else {
                 mWatchFace.setPowerSaveNormal()
@@ -122,12 +128,13 @@ class MyWatchFace : CanvasWatchFaceService() {
         }
 
         override fun onTimeTick() {
-            super.onTimeTick()
             Log.v(TAG, "start onTimeTick")
+            super.onTimeTick()
             invalidate()
         }
 
         override fun onAmbientModeChanged(inAmbientMode: Boolean) {
+            Log.v(TAG, "start onAmbientModeChanged")
             super.onAmbientModeChanged(inAmbientMode)
 
             if (inAmbientMode) {
@@ -143,6 +150,8 @@ class MyWatchFace : CanvasWatchFaceService() {
         }
 
         override fun onInterruptionFilterChanged(interruptionFilter: Int) {
+            Log.v(TAG, "start onInterruptionFilterChanged")
+
             super.onInterruptionFilterChanged(interruptionFilter)
             // @TODO
             // val inMuteMode = interruptionFilter == WatchFaceService.INTERRUPTION_FILTER_NONE
@@ -160,6 +169,8 @@ class MyWatchFace : CanvasWatchFaceService() {
         }
 
         override fun onSurfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+            Log.v(TAG, "start onSurfaceChanged")
+
             super.onSurfaceChanged(holder, format, width, height)
             mWatchFace.surfaceChanged(width, height)
         }
@@ -169,29 +180,31 @@ class MyWatchFace : CanvasWatchFaceService() {
          * used for implementing specific logic to handle the gesture.
          */
         override fun onTapCommand(tapType: Int, x: Int, y: Int, eventTime: Long) {
+            Log.v(TAG, "start onTapCommand")
             Tap().onTapCommand(
                 tapType, x, y, eventTime, applicationContext,
                 mWatchFace.mBatteryLevel
             )
             invalidate()
-
         }
 
         override fun onDraw(canvas: Canvas, bounds: Rect) {
-            mWatchFace.updateNowTime()
+            Log.v(TAG, "start onDraw")
             hourSignal()
+            mWatchFace.updateNowTime()
             mWatchFace.drawBackground(canvas)
             mWatchFace.drawWatchFace(canvas)
         }
 
         private fun hourSignal() {
+            Log.v(TAG, "start hourSignal")
             val cal = mWatchFace.getCalendar()
             val min = cal.get(Calendar.MINUTE)
             val hour24 = cal.get(Calendar.HOUR_OF_DAY)
             val sec = cal.get(Calendar.SECOND)
 
-            if (hour24 in 7..19 &&    // 6〜20時
-                sec in 0..30 &&       // 00to30 sec
+            if ((hour24 in 7..19) &&    // 6〜20時
+                (sec in 0..30 )&&       // 00to30 sec
                 (min == 55 || min == 0 || min == 5)      // 55,00,05
             ) {
                 VibrationMgr.single()
@@ -199,6 +212,7 @@ class MyWatchFace : CanvasWatchFaceService() {
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
+            Log.v(TAG, "start onVisibilityChanged")
             super.onVisibilityChanged(visible)
 
             if (visible) {
@@ -214,6 +228,7 @@ class MyWatchFace : CanvasWatchFaceService() {
         }
 
         private fun tzRegisterReceiver() {
+            Log.v(TAG, "start tzRegisterReceiver")
             if (mRegisteredTimeZoneReceiver) {
                 return
             }
@@ -223,6 +238,7 @@ class MyWatchFace : CanvasWatchFaceService() {
         }
 
         private fun bRegisterReceiver() {
+            Log.v(TAG, "start bRegisterReceiver")
             if (mRegisteredBatteryReceiver) {
                 return
             }
@@ -233,6 +249,7 @@ class MyWatchFace : CanvasWatchFaceService() {
         }
 
         private fun unRegisterReceiver() {
+            Log.v(TAG, "start unRegisterReceiver")
             if (!mRegisteredTimeZoneReceiver) {
                 return
             }
@@ -244,6 +261,7 @@ class MyWatchFace : CanvasWatchFaceService() {
          * Starts/stops the [.mUpdateTimeHandler] timer based on the state of the watch face.
          */
         private fun updateTimer() {
+            Log.v(TAG, "start updateTimer")
             mUpdateTimeHandler.removeMessages(MSG_UPDATE_TIME)
             if (!mWatchFace.getPowerSaveMode()) {
                 mUpdateTimeHandler.sendEmptyMessage(MSG_UPDATE_TIME)
@@ -254,6 +272,7 @@ class MyWatchFace : CanvasWatchFaceService() {
          * Handle updating the time periodically in interactive mode.
          */
         fun handleUpdateTimeMessage() {
+            Log.v(TAG, "start handleUpdateTimeMessage")
             invalidate()
             if (!mWatchFace.getPowerSaveMode()) {
                 val timeMs = System.currentTimeMillis()

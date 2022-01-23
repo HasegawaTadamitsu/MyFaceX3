@@ -23,7 +23,6 @@ private const val FONT_SIZE = 60f
 class WatchFace(private val resources: Resources) {
     private lateinit var mBackgroundPaint: Paint
     private lateinit var mBackgroundBitmap: Bitmap
-    private lateinit var mGrayBackgroundBitmap: Bitmap
     private var mWatchHandColor: Int = 0
     private var mWatchHandPinColor: Int = 0
     private var mWatchHandHighlightColor: Int = 0
@@ -44,10 +43,12 @@ class WatchFace(private val resources: Resources) {
     */
     private var mPowerSaveMode: Boolean = false
     fun setPowerSaveMode() {
+        Log.v(TAG, "start setPowerSaveMode")
         mPowerSaveMode = true
     }
 
     fun setPowerSaveNormal() {
+        Log.v(TAG, "start setPowerSaveNormal")
         mPowerSaveMode = false
     }
 
@@ -63,6 +64,8 @@ class WatchFace(private val resources: Resources) {
     }
 
     fun initializeBackground() {
+        Log.v(TAG, "start initializeBackground")
+
         mBackgroundPaint = Paint().apply {
             color = Color.BLACK
         }
@@ -146,7 +149,7 @@ class WatchFace(private val resources: Resources) {
     }
 
     fun updateWatchHandStyle() {
-        Log.v(TAG, "start updateWatch")
+        Log.v(TAG, "start updateWatchHandStyle")
 
         if (mPowerSaveMode) {
             mHourPaint.color = Color.GRAY
@@ -198,6 +201,8 @@ class WatchFace(private val resources: Resources) {
     private var sHourHandLength: Float = 0F
 
     fun surfaceChanged(width: Int, height: Int) {
+        Log.v(TAG, "start surfaceChange")
+
         mCenterX = width / 2f
         mCenterY = height / 2f
 
@@ -216,26 +221,8 @@ class WatchFace(private val resources: Resources) {
             (mBackgroundBitmap.width * scale).toInt(),
             (mBackgroundBitmap.height * scale).toInt(), true
         )
-
-        if (mPowerSaveMode) {
-            initGrayBackgroundBitmap()
-        }
     }
 
-    private fun initGrayBackgroundBitmap() {
-        mGrayBackgroundBitmap = Bitmap.createBitmap(
-            mBackgroundBitmap.width,
-            mBackgroundBitmap.height,
-            Bitmap.Config.ARGB_8888
-        )
-        val canvas = Canvas(mGrayBackgroundBitmap)
-        val grayPaint = Paint()
-        val colorMatrix = ColorMatrix()
-        colorMatrix.setSaturation(0f)
-        val filter = ColorMatrixColorFilter(colorMatrix)
-        grayPaint.colorFilter = filter
-        canvas.drawBitmap(mBackgroundBitmap, 0f, 0f, grayPaint)
-    }
 
     private fun zeroPad(inp: String): String {
         val str = "0000$inp"
@@ -244,13 +231,8 @@ class WatchFace(private val resources: Resources) {
     }
 
     fun drawBackground(canvas: Canvas) {
-
-
-        if (!mPowerSaveMode) {
-            canvas.drawColor(Color.BLACK)
-        } else {
-            canvas.drawBitmap(mGrayBackgroundBitmap, 0f, 0f, mBackgroundPaint)
-        }
+        Log.v(TAG, "start drawBackground")
+        canvas.drawColor(Color.BLACK)
     }
 
     var mBatteryLevel: Int = 0
@@ -259,6 +241,7 @@ class WatchFace(private val resources: Resources) {
     }
 
     fun drawWatchFace(canvas: Canvas) {
+        Log.v(TAG, "start drawWatchFace")
 
         /*
          * Draw ticks. Usually you will want to bake this directly into the photo, but in
