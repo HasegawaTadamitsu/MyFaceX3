@@ -5,6 +5,7 @@ import android.os.Vibrator
 import android.util.Log
 
 private const val TAG = "MyFaceX3_VibrationMgr"
+private const val INTERVAL_VIBRATE_MILLI_SEC = 3 * 60 * 1000 // milli sec
 
 object VibrationMgr {
     private var mLastVibrateLong: Long = 0 // last vibrate milli sec
@@ -13,6 +14,7 @@ object VibrationMgr {
             200, VibrationEffect.DEFAULT_AMPLITUDE
         )
     }
+
     private var vb: Vibrator? = null
     fun setVibrator(_vb: Vibrator) {
         vb = _vb
@@ -21,10 +23,20 @@ object VibrationMgr {
     fun single() {
         Log.v(TAG, "vibrator_single ")
 
-        val now = System.currentTimeMillis()
-        mLastVibrateLong = now
-        if ( vb != null && vb is Vibrator)  {
+        if (!checkInterval()) {
+            return
+        }
+        if (vb != null && vb is Vibrator) {
             vb!!.vibrate(mEffectSingle)
         }
+    }
+
+    private fun checkInterval(): Boolean {
+        val now = System.currentTimeMillis()
+        if (mLastVibrateLong + INTERVAL_VIBRATE_MILLI_SEC < now) {
+            return false
+        }
+        mLastVibrateLong = now
+    return true
     }
 }
