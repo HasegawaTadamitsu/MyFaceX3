@@ -11,7 +11,7 @@ object VibrationMgr {
     private var mLastVibrateLong: Long = 0 // last vibrate milli sec
     private val mEffectSingle by lazy {
         VibrationEffect.createOneShot(
-            200, VibrationEffect.DEFAULT_AMPLITUDE
+            200, 100 //VibrationEffect.DEFAULT_AMPLITUDE
         )
     }
 
@@ -34,9 +34,9 @@ object VibrationMgr {
     private fun checkInterval(): Boolean {
         val now = System.currentTimeMillis()
         if (mLastVibrateLong + INTERVAL_VIBRATE_MILLI_SEC < now) {
+            mLastVibrateLong = now
             return true
         }
-        mLastVibrateLong = now
         return false
     }
 }

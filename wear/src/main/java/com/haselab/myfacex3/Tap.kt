@@ -28,7 +28,7 @@ class Tap {
                       Toast.LENGTH_SHORT
                   )
                       .show()
-                  VibrationMgr.single()
+		      //       VibrationMgr.single()
               }
           }
     }

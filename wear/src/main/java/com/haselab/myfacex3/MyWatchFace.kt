@@ -4,7 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Rect
 import android.os.*
 import android.support.wearable.watchface.CanvasWatchFaceService
 import android.support.wearable.watchface.WatchFaceService
@@ -93,14 +94,13 @@ class MyWatchFace : CanvasWatchFaceService() {
         private lateinit var mWatchFace: WatchFace
         override fun onCreate(holder: SurfaceHolder) {
             Log.v(TAG, "start onCreate")
-            mWatchFace = WatchFace(resources)
             super.onCreate(holder)
             setWatchFaceStyle(
                 WatchFaceStyle.Builder(this@MyWatchFace)
                     .setAcceptsTapEvents(true)
                     .build()
             )
-
+            mWatchFace = WatchFace(resources)
             mWatchFace.initializeBackground()
             mWatchFace.initializeWatchFace()
         }
@@ -203,9 +203,9 @@ class MyWatchFace : CanvasWatchFaceService() {
             val hour24 = cal.get(Calendar.HOUR_OF_DAY)
             val sec = cal.get(Calendar.SECOND)
 
-            if ((hour24 in 7..19) &&    // 6〜20時
-                (sec in 0..30 )&&       // 00to30 sec
-                (min == 55 || min == 0 || min == 5)      // 55,00,05
+            if ((hour24 in 7..19) &&    // 7〜19時
+                (sec in 0..30 )&&       // 00to10 sec
+                (min == 55 || min == 0 )      // 55,00
             ) {
                 VibrationMgr.single()
             }
