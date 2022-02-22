@@ -199,13 +199,13 @@ class MyWatchFace : CanvasWatchFaceService() {
         private fun hourSignal() {
             Log.v(TAG, "start hourSignal")
             val cal = mWatchFace.getCalendar()
-            val min = cal.get(Calendar.MINUTE)
             val hour24 = cal.get(Calendar.HOUR_OF_DAY)
+            val min = cal.get(Calendar.MINUTE)
             val sec = cal.get(Calendar.SECOND)
 
             if ((hour24 in 7..19) &&    // 7〜19時
-                (sec in 0..30 )&&       // 00to10 sec
-                (min == 55 || min == 0 )      // 55,00
+                (min == 55 || min == 0 ) &&  // 55,00
+                (sec == 0 )                 // 00to10 sec
             ) {
                 VibrationMgr.single()
             }
